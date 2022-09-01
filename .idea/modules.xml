@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/TuJava.iml" filepath="$PROJECT_DIR$/.idea/TuJava.iml" />
+      <module fileurl="file://$PROJECT_DIR$/crud/crud.iml" filepath="$PROJECT_DIR$/crud/crud.iml" />
     </modules>
   </component>
 </project>
