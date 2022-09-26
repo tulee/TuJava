@@ -14,6 +14,15 @@ create table items(
                       item_type enum('GOLD_613','GOLD_10K','GOLD_ITALI')
 ) engine=InnoDB default charset=utf8;
 
+create table prices(
+                       timestamp timestamp,
+                       date date,
+                       status varchar(10),
+                       base varchar(3),
+                       rate json,
+                       unit varchar(20)
+) engine=InnoDB default charset=utf8;
+
 insert into items(item_name,item_price,item_type)
 values
     ('Vang Phuc Loc Tho',3000000,'GOLD_613'),

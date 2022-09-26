@@ -38,4 +38,6 @@ public class ItemsController {
     public List<ItemsDTO> searchItemsByName(@RequestParam String term){
         return itemsService.findByItemsName(term);
     }
+
+    
 }

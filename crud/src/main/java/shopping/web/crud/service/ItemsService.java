@@ -7,6 +7,7 @@ import shopping.web.crud.model.ItemsRequest;
 import java.util.List;
 import java.util.Optional;
 
+
 public interface ItemsService {
     //search by item name
     List<ItemsDTO> findByItemsName(String term);
