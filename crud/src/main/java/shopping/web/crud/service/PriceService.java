@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -25,35 +26,39 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
 public class PriceService {
-    @Autowired
-    PricesRepository pricesRepository;
+	@Autowired
+	PricesRepository pricesRepository;
 
-    private static final String openMapURL = "https://metals-api.com/api/latest?access_key=";
-    private static final String apiParams = "&base=USD&symbols=XAU";
+	private static final String openMapURL = "https://metals-api.com/api/latest?access_key=";
+	private static final String apiParams = "&base=USD&symbols=XAU";
 
-    @Value(value = "89qcrnvpsr1712qovonnobhhz5z4hci3gc6s7kja69jmb053kz9m152m9a11")
-    private String apiKey;
+	@Value(value = "89qcrnvpsr1712qovonnobhhz5z4hci3gc6s7kja69jmb053kz9m152m9a11")
+	private String apiKey;
 
-    @NonNull
-    private final RestTemplate restTemplate;
+	@Autowired
+	@Qualifier("RestTemplate")
+	private RestTemplate restTemplate;
 
-    @Transactional
-    public Prices getApiPrice() throws JsonProcessingException {
-        restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
-        HttpHeaders openPriceHeaders = new HttpHeaders();
-        HttpEntity<String> openPriceEntity = new HttpEntity<>(openPriceHeaders);
-        final ResponseEntity<String> openPriceResponse = restTemplate.exchange(
-                openMapURL + apiKey + apiParams,
-                HttpMethod.GET, openPriceEntity, String.class);
+	@Transactional
+	public Prices getApiPrice() throws JsonProcessingException {
+		//cách 2
+//        RestTemplate restTemplate = new RestTemplate();
 
-        PriceDeserializer priceDeserializer = JsonUtils.toValue(openPriceResponse.getBody(), PriceDeserializer.class);
+		restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+		HttpHeaders openPriceHeaders = new HttpHeaders();
+		HttpEntity<String> openPriceEntity = new HttpEntity<>(openPriceHeaders);
+		final ResponseEntity<String> openPriceResponse = restTemplate.exchange(
+				openMapURL + apiKey + apiParams,
+				HttpMethod.GET, openPriceEntity, String.class);
 
-        return Prices.builder().timestamp(priceDeserializer.getTimestamp())
-                .date(priceDeserializer.getDate())
-                .base(priceDeserializer.getBase())
-                .rate(priceDeserializer.getRate())
-                .status(priceDeserializer.getStatus())
-                .unit(priceDeserializer.getUnit())
-                .build();
-    }
+		PriceDeserializer priceDeserializer = JsonUtils.toValue(openPriceResponse.getBody(), PriceDeserializer.class);
+
+		return Prices.builder().timestamp(priceDeserializer.getTimestamp())
+				.date(priceDeserializer.getDate())
+				.base(priceDeserializer.getBase())
+				.rate(priceDeserializer.getRate())
+				.status(priceDeserializer.getStatus())
+				.unit(priceDeserializer.getUnit())
+				.build();
+	}
 }
